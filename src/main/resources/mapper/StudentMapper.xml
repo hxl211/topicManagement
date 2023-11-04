@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxl.boot.mapper.StudentMapper">
+
+    <resultMap id="BaseResultMap" type="com.hxl.boot.pojo.Student">
+            <id property="studentId" column="student_id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="age" column="age" jdbcType="INTEGER"/>
+            <result property="sex" column="sex" jdbcType="VARCHAR"/>
+            <result property="classId" column="class_id" jdbcType="INTEGER"/>
+            <result property="topicId" column="topic_id" jdbcType="INTEGER"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="userPhoto" column="user_photo" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        student_id,name,age,
+            topic_id,
+        sex,class_id,username,
+        password,email,user_photo,
+        create_time,update_time,nickname
+    </sql>
+    <update id="clearDeletedTopic">
+        update student set topic_id=null where topic_id=#{topicId}
+    </update>
+
+    <resultMap id="getStudentAllAndTopicByTopicIdResultMap" type="com.hxl.boot.vo.StudentDTO">
+        <association property="topic" select="com.hxl.boot.mapper.TopicMapper.getTopicIdAndName" column="topic_id"/>
+    </resultMap>
+    <select id="getStudentAllAndTopicByTopicId" resultMap="getStudentAllAndTopicByTopicIdResultMap">
+        select <include refid="Base_Column_List"/>
+        from student
+        <if test="topicId>0">
+            where topic_id=#{topicId}
+        </if>
+        <if test="topicId==-1">
+            where topic_id is null
+        </if>
+
+    </select>
+</mapper>

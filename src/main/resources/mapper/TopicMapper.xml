@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxl.boot.mapper.TopicMapper">
+    <resultMap id="BaseResultMap" type="com.hxl.boot.pojo.Topic">
+        <id property="topicId" column="topic_id" jdbcType="INTEGER"/>
+        <result property="topicName" column="topic_name" jdbcType="VARCHAR"/>
+        <result property="topicIntroduce" column="topic_introduce" jdbcType="VARCHAR"/>
+        <result property="topicCredit" column="topic_credit" jdbcType="INTEGER"/>
+        <result property="topicPeriod" column="topic_period" jdbcType="INTEGER"/>
+        <result property="memberNum" column="member_num" jdbcType="INTEGER"/>
+        <result property="topicMaxPeople" column="topic_max_people" jdbcType="INTEGER"/>
+        <result property="teacherId" column="teacher_id" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="gradeRatio" column="grade_ratio" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        topic_id ,topic_name,topic_introduce,
+        topic_credit,topic_period,member_num,
+        topic_max_people,teacher_id,create_time,
+        update_time,grade_ratio
+    </sql>
+
+    <resultMap id="TopicAllByPublisherIdResultMap" type="com.hxl.boot.vo.TopicAndTeacherNamesDTO">
+            <!--        通过id查询发布者名字-->
+        <association property="publisher" select="com.hxl.boot.mapper.TeacherMapper.getTeacherName" column="teacher_id"/>
+            <!--            获取课题-->
+        <association property="topic" resultMap="BaseResultMap"/>
+             <!--        获取授课老师们的名字-->
+        <collection property="teacherNames" select="com.hxl.boot.mapper.TeachMapper.getTeacherNameByTopicId" column="topic_id"/>
+    </resultMap>
+<!--    根据发布者的id查询所管理的id-->
+    <select id="getTopicAllByPublisherId" resultMap="TopicAllByPublisherIdResultMap">
+        select * from topic where teacher_id=#{teacherId}
+    </select>
+
+<!--    根据课题id的集合查询所教授的课-->
+    <select id="getTopicAllByTopicId" resultMap="TopicAllByPublisherIdResultMap" >
+        select * from topic where topic_id in
+        <foreach collection="topicIds" item="id"  open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--    根据一个授课老师的id查询他所教授的课-->
+    <select id="getTopicAllByTeacherId" resultMap="TopicAllByPublisherIdResultMap">
+        select * from topic WHERE topic_id in ( SELECT topic_id from teach  WHERE teacher_id=#{teacherId})
+    </select>
+
+<!--    查询某教师交的所有课的名字-->
+    <select id="getTopicNames" resultType="com.hxl.boot.pojo.Topic">
+                    select topic.topic_id as topicId,topic_name as topicName
+                    from topic
+                        join teach t
+                            on topic.topic_id = t.topic_id
+                    where  t.teacher_id=#{teacher}
+</select>
+
+    <select id="getTopicIdAndName" resultType="com.hxl.boot.vo.TopicDTO">
+            select topic.topic_id as topicId,topic_name as topicName    from topic where topic_id=#{topicId}
+    </select>
+<!--    通过课题id查询 课题信息跟授课老师-->
+    <select id="getTopicAndTeacherNamesByTopicId" resultMap="TopicAllByPublisherIdResultMap">
+        select * from topic where topic_id=#{topicId}
+    </select>
+
+</mapper>

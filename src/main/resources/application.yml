@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/management
+    username: root
+    password: Hxl.20020924
+    type: com.alibaba.druid.pool.DruidDataSource
+  jackson:
+    default-property-inclusion: non_null
+  servlet:
+    multipart:
+     max-file-size: 11MB  #设置单个文件最大容量
+     max-request-size: 20MB  #设置某次请求最大容量
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #添加控制台展示sql的log
+server:
+  port: 8081
+
+

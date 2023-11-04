@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxl.boot.mapper.TeachMapper">
+
+    <resultMap id="BaseResultMap" type="com.hxl.boot.pojo.Teach">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="teacherId" column="teacher_id" jdbcType="INTEGER"/>
+            <result property="topicId" column="topic_id" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,teacher_id,topic_id
+    </sql>
+
+
+    <select id="getTeacherNameByTopicId"   resultType="string">
+        select name from teach
+                          join teacher
+                          on teach.teacher_id =teacher.teacher_id
+                          where topic_id=#{topicId}
+    </select>
+
+
+
+<!--    通过教师id 获取该教师所教授的课id的集合-->
+    <select id="getTopicIdAllByTeacherId"  resultType="integer">
+        select topic_id from teach where teacher_id=#{teacherId}
+    </select>
+</mapper>

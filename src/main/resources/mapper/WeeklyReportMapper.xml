@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxl.boot.mapper.WeeklyReportMapper">
+
+    <resultMap id="BaseResultMap" type="com.hxl.boot.pojo.WeeklyReport">
+        <id property="weeklyReportId" column="weekly_report_id" jdbcType="INTEGER"/>
+        <result property="topicId" column="topic_id" jdbcType="INTEGER"/>
+        <result property="studentId" column="student_id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="sign" column="sign" jdbcType="VARCHAR"/>
+        <result property="associatedWeek" column="associated_week" jdbcType="TIMESTAMP"/>
+        <result property="associatedWeekNum" column="associated_week_num" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        weekly_report_id,topic_id,student_id,
+        title,content,create_time,
+        update_time,sign,associated_week,
+        associated_week_num
+    </sql>
+    <resultMap id="topicStudentMap" type="com.hxl.boot.vo.WeeklyReportAndStudentDTO">
+        <association property="weeklyReportDTO">
+
+            <result property="fileExists" javaType="Long" column="count"/>
+            <association property="weeklyReport" resultMap="BaseResultMap"/>
+        </association>
+        <association property="student">
+            <result property="studentId" column="student_id"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+<!--    用 wr.*,lrf.file_id 当作数量 超过1 表示存在 -->
+    <select id="getTopicStudentsPage" resultMap="topicStudentMap">
+
+        <where>
+            and wr.topic_id=#{dto.topicId}
+            <if test="dto.associatedWeekNum!=null">
+                and associated_week_num=#{dto.associatedWeekNum}
+            </if>
+            <if test="dto.name !=null">
+                and s.name=#{dto.name}
+            </if>
+            <if test="dto.start!=null and dto.end!=null">
+                and wr.create_time between #{dto.start} and #{dto.end}
+            </if>
+        </where>
+        order by wr.create_time asc
+    </select>
+</mapper>

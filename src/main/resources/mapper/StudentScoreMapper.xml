@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxl.boot.mapper.StudentScoreMapper">
+
+    <resultMap id="BaseResultMap" type="com.hxl.boot.pojo.StudentScore">
+            <id property="studentScoreId" column="student_score_id" jdbcType="INTEGER"/>
+            <result property="studentId" column="student_id" jdbcType="INTEGER"/>
+            <result property="topicId" column="topic_id" jdbcType="INTEGER"/>
+            <result property="regularGrade" column="regular_grade" jdbcType="INTEGER"/>
+            <result property="finalGrade" column="final_grade" jdbcType="INTEGER"/>
+            <result property="totalMark" column="total_mark" jdbcType="INTEGER"/>
+            <result property="finalAcademicRecordFileId" column="final_academic_record_file_id" jdbcType="INTEGER"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        student_score_id,student_id,topic_id,
+        regular_grade,final_grade,total_mark,
+        final_academic_record_file_id,remark
+    </sql>
+
+    <resultMap id="scoreAndTopicInfoMap" type="com.hxl.boot.vo.StudentScoreDTO">
+       <association property="topic">
+           <result property="topicName" column="topic_name"/>
+       </association>
+        <association property="studentScore" resultMap="BaseResultMap"/>
+    </resultMap>
+    <resultMap id="studentScoreAllMap" type="com.hxl.boot.vo.StudentScoreDTO">
+        <association property="student" resultMap="com.hxl.boot.mapper.StudentMapper.BaseResultMap"/>
+        <association property="studentScore" resultMap="BaseResultMap"/>
+        <association property="topic" resultMap="com.hxl.boot.mapper.TopicMapper.BaseResultMap"/>
+    </resultMap>
+
+    <select id="getScoreInfoAndTopicInfo" resultMap="scoreAndTopicInfoMap">
+        select sc.*, t.topic_name
+        from student_score sc
+                 join topic t
+                      on sc.topic_id = t.topic_id
+        where student_id = #{studentId}
+    </select>
+    <select id="getStudentAllScoreByTopicId" resultMap="studentScoreAllMap">
+
+        select s.student_id,
+               s.name,
+               s.sex,
+               s.topic_id,
+               sc.student_score_id,
+               sc.regular_grade,
+               sc.final_grade,
+               sc.total_mark,
+               sc.remark,
+               t.topic_name,
+               t.grade_ratio,
+               trf.id as final_academic_record_file_id
+        from student s
+                 left join student_score sc
+                           on s.student_id = sc.student_id
+                 left join topic t
+                 left join topic_report_file trf on t.topic_id = trf.topic_id
+                           on s.topic_id = t.topic_id and sc.student_id=trf.student_id
+        where s.topic_id = #{topicId}
+    </select>
+</mapper>
