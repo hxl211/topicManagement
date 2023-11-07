@@ -156,14 +156,12 @@ public class TaskController {
      * @param weeklyReportJson 周报信息
      * @param request
      * @return
-     * @throws IOException
      */
     @PostMapping("")
     public AjaxR saveStudentTask(@RequestPart(value = "file", required = false) MultipartFile oneFile,
                                  @RequestParam("weeklyReport") String weeklyReportJson,
-
                                  HttpServletRequest request
-    ) throws IOException {
+    ) {
         Integer userId = JwtUtil.getUserId(request.getHeader("token"));
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
@@ -210,9 +208,12 @@ public class TaskController {
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
+        //创建缓存文件目录
         String cacheDirectory = FileMergeUtil.existsCacheDirectory(userId);
+
         if (cacheDirectory!=null) {
             try {
+                //保存分片文件-单个
                 file.transferTo(new File(cacheDirectory+file.getOriginalFilename()));
             } catch (IOException e) {
                 throw new RuntimeException(e);

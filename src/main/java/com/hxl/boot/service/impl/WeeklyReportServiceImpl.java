@@ -11,6 +11,7 @@ import com.hxl.boot.mapper.*;
 import com.hxl.boot.pojo.*;
 import com.hxl.boot.service.WeeklyReportService;
 import com.hxl.boot.utils.AjaxR;
+import com.hxl.boot.utils.FileMergeUtil;
 import com.hxl.boot.vo.SearchWeeklyReportInfoDTO;
 import com.hxl.boot.vo.WeekReportInfo;
 import com.hxl.boot.vo.WeeklyReportAndStudentDTO;
@@ -85,8 +86,12 @@ public class WeeklyReportServiceImpl extends ServiceImpl<WeeklyReportMapper, Wee
         String originalFileName = oneFile.getOriginalFilename();//获取文件的名字 带拓展名
         String suffix = originalFileName.substring(originalFileName.lastIndexOf("."));
         String codeName = weeklyReport.getWeeklyReportId() + suffix;
+
+        String storePath=StaticEnum.WEEKLY_REPORT_FILE_PATH.getValString1() +userId+"\\"+idMap.get("topicId")+"\\"+idMap.get("weeklyReportId");
+
+        new File(storePath).mkdirs();
         //路径
-        String path = StaticEnum.WEEKLY_REPORT_FILE_PATH.getValString1() + codeName;
+        String path = storePath+"\\"+ codeName;
         //保存文件信息
         int iFile = learningRecordFileMapper.insert(new LearningRecordFile(null,
                 weeklyReport.getWeeklyReportId(),
@@ -104,6 +109,7 @@ public class WeeklyReportServiceImpl extends ServiceImpl<WeeklyReportMapper, Wee
             oneFile.transferTo(new File(path));
             return idMap;
         } catch (IOException e) {
+            log.error("io错误",e);
             throw new StateException(StateEnum.UNKNOWN_ERROR);
         }
 

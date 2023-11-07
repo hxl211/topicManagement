@@ -1,5 +1,6 @@
 package com.hxl.boot.utils;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hxl.boot.annotation.StateEnum;
 import com.hxl.boot.exception.StateException;
@@ -38,16 +39,17 @@ public class FileMergeUtil {
         if (s==null) {
             return null;
         }
-        //合并文件具体路径（一定存在）
-        String path = s+"\\"+ mergeFileName + mergeFileSuffix;
+
         //合并文件的目录
         FileOutputStream fos = null;
         FileInputStream fis=null;
         try {
+            //合并文件具体路径（一定存在）
+            String path = s+"\\"+ mergeFileName + mergeFileSuffix;
             fos = new FileOutputStream(path,true);
             //读写文件
             for (File f : files) {
-                byte[] cache = new byte[1024 * 1924];
+                byte[] cache = new byte[1024 * 1024];
                  fis= new FileInputStream(f);
                 int readCount = 0;
                 while ((readCount = fis.read(cache)) != -1) {
@@ -66,9 +68,7 @@ public class FileMergeUtil {
         finally {
             try {
                 if (fos != null) {
-
                     fos.close();
-
                 }
                 if (fis!=null){
                     fis.close();
