@@ -11,13 +11,12 @@ import com.hxl.boot.pojo.Teacher;
 import com.hxl.boot.service.StudentService;
 import com.hxl.boot.service.TeacherService;
 import com.hxl.boot.utils.AjaxR;
-import com.hxl.boot.utils.JwtUtil;
+import com.hxl.boot.utils.ThreadLocalUtil;
 import com.hxl.boot.vo.StudentDTO;
 import com.hxl.boot.vo.TeacherDTO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Instant;
@@ -38,12 +37,12 @@ public class UserController {
      */
     @GetMapping("")
     public AjaxR queryUser(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
+
         TeacherDTO teacher = null;
         StudentDTO student = null;
         //获取当前登录用户id跟身份
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
-        String identity = JwtUtil.getIdentity(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
+        String identity = ThreadLocalUtil.getUser().getIdentity();
         if (userId == null || identity == null) {
             throw new StateException(StateEnum.USER_NOT_FOUND);
         }
@@ -91,7 +90,7 @@ public class UserController {
     @PutMapping("/psw")
     public AjaxR updateUserInfo(HttpServletRequest request, String type, String info) {
         //获取当前登录用户
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) throw new StateException(StateEnum.USER_NOT_FOUND);
 
         //info不合法则返回

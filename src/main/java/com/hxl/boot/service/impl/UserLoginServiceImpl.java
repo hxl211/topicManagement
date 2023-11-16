@@ -1,6 +1,5 @@
 package com.hxl.boot.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -13,11 +12,9 @@ import com.hxl.boot.mapper.TeacherMapper;
 import com.hxl.boot.pojo.DifferentMenu;
 import com.hxl.boot.pojo.Student;
 import com.hxl.boot.pojo.Teacher;
-import com.hxl.boot.service.DifferentMenuService;
 import com.hxl.boot.service.UserLoginService;
 import com.hxl.boot.utils.AjaxR;
 import com.hxl.boot.utils.JwtUtil;
-import com.hxl.boot.vo.TeacherDTO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -70,11 +67,11 @@ public class UserLoginServiceImpl implements UserLoginService {
         map.put("userId", id + "");
         map.put("identity", identityType);
         //生成token
-        String token = JwtUtil.createToken(StaticEnum.TOKEN_EXPIRE_TIME.getValInt(), map);
-
+        String accessToken = JwtUtil.createToken(20, map);
+        String refreshToken=JwtUtil.createToken(StaticEnum.REFRESH_TOKEN_EXPIRE_TIME.getValInt(), map);
         //获取菜单
         DifferentMenu menu = differentMenuMapper.selectOne(new LambdaQueryWrapper<DifferentMenu>()
                 .eq(DifferentMenu::getIdentity, identityType).select(DifferentMenu::getMenu));
-        return AjaxR.success(token,menu);
+        return AjaxR.success(accessToken,refreshToken,menu);
     }
 }

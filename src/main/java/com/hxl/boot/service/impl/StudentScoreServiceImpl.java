@@ -13,7 +13,6 @@ import com.hxl.boot.pojo.StudentScore;
 import com.hxl.boot.service.StudentScoreService;
 import com.hxl.boot.mapper.StudentScoreMapper;
 import com.hxl.boot.utils.AjaxR;
-import com.hxl.boot.vo.ScoreInfoDTO;
 import com.hxl.boot.vo.StudentScoreDTO;
 import org.springframework.stereotype.Service;
 

@@ -8,8 +8,6 @@ import com.hxl.boot.pojo.Teach;
 import com.hxl.boot.service.TeachService;
 import com.hxl.boot.service.TeacherService;
 import com.hxl.boot.utils.AjaxR;
-import com.hxl.boot.utils.JwtUtil;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 

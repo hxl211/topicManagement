@@ -6,13 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.hxl.boot.annotation.StateEnum;
 import com.hxl.boot.exception.StateException;
 import com.hxl.boot.pojo.Student;
-import com.hxl.boot.pojo.Teach;
 import com.hxl.boot.pojo.Topic;
-import com.hxl.boot.service.StudentScoreService;
 import com.hxl.boot.service.StudentService;
 import com.hxl.boot.service.TopicService;
 import com.hxl.boot.utils.AjaxR;
-import com.hxl.boot.utils.JwtUtil;
+import com.hxl.boot.utils.ThreadLocalUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -74,8 +72,9 @@ public class StudentController {
      * @return
      */
     @GetMapping("/topic")
+    @CrossOrigin
     public AjaxR getStudentTopic(HttpServletRequest request) {
-        Integer studentId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer studentId = ThreadLocalUtil.getUser().getUserId();
         if (studentId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }

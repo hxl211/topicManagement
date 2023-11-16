@@ -1,10 +1,5 @@
 package com.hxl.boot.utils;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.StrUtil;
-import com.hxl.boot.annotation.StateEnum;
-import com.hxl.boot.exception.StateException;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;

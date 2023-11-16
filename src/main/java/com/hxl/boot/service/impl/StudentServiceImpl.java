@@ -8,7 +8,6 @@ import com.hxl.boot.annotation.StaticEnum;
 import com.hxl.boot.exception.StateException;
 import com.hxl.boot.mapper.TopicMapper;
 import com.hxl.boot.pojo.Student;
-import com.hxl.boot.pojo.Topic;
 import com.hxl.boot.service.StudentService;
 import com.hxl.boot.mapper.StudentMapper;
 import com.hxl.boot.utils.AjaxR;

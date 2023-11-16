@@ -8,7 +8,6 @@ import com.hxl.boot.mapper.TopicReportFileMapper;
 import com.hxl.boot.pojo.LearningRecordFile;
 import com.hxl.boot.pojo.TopicReportFile;
 import com.hxl.boot.service.FileDownloadService;
-import com.hxl.boot.service.LearningRecordFileService;
 import com.hxl.boot.utils.FileMergeUtil;
 import org.springframework.stereotype.Service;
 

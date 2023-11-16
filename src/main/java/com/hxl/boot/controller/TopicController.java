@@ -1,8 +1,6 @@
 package com.hxl.boot.controller;
 
 
-import cn.hutool.core.date.DateTime;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.hxl.boot.annotation.StateEnum;
 import com.hxl.boot.exception.StateException;
@@ -11,6 +9,7 @@ import com.hxl.boot.service.TopicService;
 import com.hxl.boot.service.WeeklyReportService;
 import com.hxl.boot.utils.AjaxR;
 import com.hxl.boot.utils.JwtUtil;
+import com.hxl.boot.utils.ThreadLocalUtil;
 import com.hxl.boot.vo.SearchWeeklyReportInfoDTO;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +33,7 @@ public class TopicController {
     @GetMapping("/publish/page/{page}")
     public AjaxR queryTopicAllByPublisherId(HttpServletRequest request, @PathVariable Integer page) {
 
-        Integer teacherId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer teacherId =  ThreadLocalUtil.getUser().getUserId();
         if (teacherId == null) throw new StateException(StateEnum.USER_NOT_LOGIN);
 
         return topicService.getTopicAllByPublisherId(teacherId, page);
@@ -48,7 +47,7 @@ public class TopicController {
      */
     @GetMapping("/teach/page/{page}")
     public AjaxR queryTopicAllByTeacherId(HttpServletRequest request, @PathVariable Integer page) {
-        Integer teacherId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer teacherId =  ThreadLocalUtil.getUser().getUserId();
         return topicService.getTopicAllByTeacherId(teacherId, page);
     }
     /**
@@ -59,7 +58,7 @@ public class TopicController {
     @GetMapping("/names")
     public AjaxR getTeachNames(HttpServletRequest request){
         //获取当前登录用户
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) throw new StateException(StateEnum.USER_NOT_FOUND);
        return    topicService.getTopicNames(userId);
     }
@@ -67,7 +66,7 @@ public class TopicController {
 
     @GetMapping("/student/search")
     public  AjaxR getTopicStudent(HttpServletRequest request, SearchWeeklyReportInfoDTO dto){
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -87,7 +86,7 @@ public class TopicController {
     @PostMapping
     public AjaxR addTopic(HttpServletRequest request, Topic topicInfo, String topicName) {
 
-        Integer teacherId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer teacherId = ThreadLocalUtil.getUser().getUserId();
         if (teacherId == null) throw new StateException(StateEnum.USER_NOT_LOGIN);
         return topicService.saveTopic(teacherId, topicInfo);
 
@@ -101,7 +100,7 @@ public class TopicController {
      */
     @DeleteMapping("{id}")
     public AjaxR deleteTopic(HttpServletRequest request, @PathVariable Integer id) {
-        Integer teacherId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer teacherId = ThreadLocalUtil.getUser().getUserId();
         if (teacherId == null) throw new StateException(StateEnum.USER_NOT_LOGIN);
 
         return topicService.deleteTopic(id);
@@ -114,7 +113,7 @@ public class TopicController {
      */
     @PutMapping()
     public AjaxR ModifyTopicByEntity(HttpServletRequest request, Topic topic) {
-        Integer teacherId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer teacherId = ThreadLocalUtil.getUser().getUserId();
         if (teacherId == null) throw new StateException(StateEnum.USER_NOT_LOGIN);
 
         //设置更新时间

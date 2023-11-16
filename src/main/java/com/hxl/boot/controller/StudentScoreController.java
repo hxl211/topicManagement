@@ -1,6 +1,5 @@
 package com.hxl.boot.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hxl.boot.annotation.StateEnum;
 import com.hxl.boot.exception.StateException;
@@ -10,7 +9,7 @@ import com.hxl.boot.service.StudentScoreService;
 import com.hxl.boot.service.TeacherService;
 import com.hxl.boot.utils.AjaxR;
 import com.hxl.boot.utils.JwtUtil;
-import com.hxl.boot.vo.ScoreInfoDTO;
+import com.hxl.boot.utils.ThreadLocalUtil;
 import com.hxl.boot.vo.StudentScoreDTO;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +41,7 @@ public class StudentScoreController {
 
     @GetMapping()
     public AjaxR getStudentScoreInfo(HttpServletRequest request) {
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -63,7 +62,7 @@ public class StudentScoreController {
 
     @GetMapping("/page/{page}/{selectTopicId}")
     public AjaxR getStudentAllScoreByTopicId(HttpServletRequest request, @PathVariable Integer page, @PathVariable Integer selectTopicId) {
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -84,7 +83,7 @@ public class StudentScoreController {
 
     @PostMapping()
     public AjaxR saveStudentScore(HttpServletRequest request, StudentScore  info) {
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }

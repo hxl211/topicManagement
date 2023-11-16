@@ -1,19 +1,14 @@
 package com.hxl.boot.utils;
+import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hxl.boot.annotation.StaticEnum;
-import com.hxl.boot.pojo.Teacher;
 import com.hxl.boot.vo.UserDTO;
+import org.springframework.lang.Nullable;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.Map;
 
@@ -43,18 +38,40 @@ public class JwtUtil {
     }
 
     /**
+     * 根据过期时间生产token ，保存用户信息
+     * @param expireTime 过期时间，单位 s
+     * @param userDTO id跟身份的封装
+     * @return token
+     */
+    public static String createToken(long expireTime, UserDTO userDTO){
+
+        //设置失效时间 当前时间毫秒+10*1000毫秒（也就是十秒后）
+        Date expireDate=new Date(System.currentTimeMillis()+1000*expireTime);
+
+        String token=  JWT.create()    //创建JWT
+
+                .withClaim("userId",userDTO.getUserId())
+                .withClaim("identity",userDTO.getIdentity())
+                .withExpiresAt(expireDate)  //设置失效时间
+                .sign(Algorithm.HMAC256(SECRET));  //设置签名  中间为 自己设置的 密钥
+        return token;
+    }
+
+    /**
      * 根据token和当前时间判断是否过期
      * @param token  token
-     * @return 是否过期 true为已过期 ，false为没过期
+     * @return 是否过期为false已过期 ， true为没过期 null表示非法token
      */
-    public static boolean verifierToken (String token){
-        if (token==null) return true;
-        //通过这个对象的verify 传入 token字符串进行解密
+    @Nullable
+    public static Boolean  validToken  ( String token){
+
         try {
              JWT_VERIFIER.verify(token);
-            return false;
+            return true;
         } catch (TokenExpiredException e){
-                return true;
+                return false;
+        } catch (Exception e){
+            return  null;
         }
     }
 
@@ -64,12 +81,8 @@ public class JwtUtil {
      * @return 用户Id
      */
     public static Integer getUserId(String token){
-        if (token==null) return null;
-        boolean  expired= verifierToken(token);
-        if(expired) return null;
-        //
-        Integer userId = Integer.parseInt(JWT_VERIFIER.verify(token).getClaim("userId").asString());
-      return  userId;
+        if (StrUtil.isBlank(token)) return null;
+        return  BooleanUtil.isTrue(validToken(token)) ?  JWT_VERIFIER.verify(token).getClaim("userId").asInt() :null;
     }
 
     /**
@@ -78,12 +91,9 @@ public class JwtUtil {
      * @return String
      */
     public static String getIdentity(String token){
-        if (token==null) return null;
-        boolean  expired= verifierToken(token);
-        if(expired) return null;
+        if(!Boolean.TRUE.equals(JwtUtil.validToken(token))) return null;
 
-        String identity = JWT_VERIFIER.verify(token).getClaim("identity").asString();
-        return  identity;
+        return JWT_VERIFIER.verify(token).getClaim("identity").asString();
     }
 
     /**
@@ -92,10 +102,7 @@ public class JwtUtil {
      * @return UserDTO
      */
     public static UserDTO getUserDTO(String token){
-        if (token==null) return null;
-        boolean  expired= verifierToken(token);
-        if(expired) return null;
-        //
+        if(!Boolean.TRUE.equals(JwtUtil.validToken(token))) return null;
         Integer userId = Integer.parseInt(JWT_VERIFIER.verify(token).getClaim("userId").asString());
         String identity = JWT_VERIFIER.verify(token).getClaim("identity").asString();
         if (StaticEnum.USER_IDENTITY.getValString1().equals(identity)) {

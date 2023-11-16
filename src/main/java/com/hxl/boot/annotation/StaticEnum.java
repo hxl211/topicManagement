@@ -5,6 +5,8 @@ public enum StaticEnum {
     PASSWORD_REG("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$"),
     EMAIL_REG("\\w+@\\w+(\\.\\w+)+"),
     TOKEN_EXPIRE_TIME(60 * 60 * 24),
+    ACCESS_TOKEN_EXPIRE_TIME(60*30), //三十分钟
+    REFRESH_TOKEN_EXPIRE_TIME(60*60),//一个小时
     SECRET_KEY("FDGDNFY@1&^%$"),
     USER_IDENTITY("adm","user"),
     WEEKLY_REPORT_FILE_PATH("D:\\HTML\\后台管理系统\\file\\");

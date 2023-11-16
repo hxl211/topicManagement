@@ -1,27 +1,28 @@
 package com.hxl.boot.controller;
+
 import cn.hutool.core.date.DateTime;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.hxl.boot.annotation.StateEnum;
 import com.hxl.boot.exception.StateException;
-import com.hxl.boot.pojo.*;
+import com.hxl.boot.pojo.CacheFile;
+import com.hxl.boot.pojo.LearningRecordFile;
+import com.hxl.boot.pojo.Topic;
+import com.hxl.boot.pojo.WeeklyReport;
 import com.hxl.boot.service.*;
 import com.hxl.boot.utils.AjaxR;
 import com.hxl.boot.utils.FileMergeUtil;
-import com.hxl.boot.utils.JwtUtil;
+import com.hxl.boot.utils.ThreadLocalUtil;
 import com.hxl.boot.vo.WeeklyReportCountDTO;
 import com.hxl.boot.vo.WeeklyReportDTO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -47,7 +48,7 @@ public class TaskController {
      * @return
      */
     @GetMapping("/{id}") AjaxR getTaskById(HttpServletRequest request,@PathVariable Integer id){
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -66,7 +67,7 @@ public class TaskController {
     @GetMapping("/count/{topicId}")
     public AjaxR getTaskCount(HttpServletRequest request,@PathVariable Integer topicId){
 
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -94,7 +95,7 @@ public class TaskController {
      */
     @GetMapping()
     public  AjaxR getStudentTaskList(HttpServletRequest request){
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -110,7 +111,7 @@ public class TaskController {
      */
     @GetMapping("/info")
     public AjaxR getStudentTaskInfo(HttpServletRequest request){
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -119,7 +120,7 @@ public class TaskController {
 
     @PostMapping("/topicReport")
     public AjaxR saveTopicReport(HttpServletRequest request,MultipartFile file){
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -140,7 +141,7 @@ public class TaskController {
                                @PathVariable Integer id,
                                @PathVariable Integer type
     ) throws IOException {
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -162,7 +163,7 @@ public class TaskController {
                                  @RequestParam("weeklyReport") String weeklyReportJson,
                                  HttpServletRequest request
     ) {
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -184,7 +185,7 @@ public class TaskController {
      */
     @PostMapping("/upload/ack")
     public AjaxR uploadPrepare(HttpServletRequest request,WeeklyReport weeklyReport, CacheFile cacheFile){
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -204,7 +205,7 @@ public class TaskController {
                                  Integer chunks,
                                  Integer chunk,
                                  HttpServletRequest request) {
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }
@@ -228,7 +229,7 @@ public class TaskController {
 
     @DeleteMapping("{id}")
     public AjaxR deleteWeeklyReport(HttpServletRequest request,@PathVariable Integer id){
-        Integer userId = JwtUtil.getUserId(request.getHeader("token"));
+        Integer userId = ThreadLocalUtil.getUser().getUserId();
         if (userId == null) {
             throw new StateException(StateEnum.USER_NOT_LOGIN);
         }

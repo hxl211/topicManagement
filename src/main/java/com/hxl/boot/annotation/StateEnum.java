@@ -2,6 +2,7 @@ package com.hxl.boot.annotation;
 
 
 public enum StateEnum {
+    REFRESH(1000,"refresh"),
     PASSWORD_ERROR(1001,"密码错误！！！") ,
     USER_NOT_FOUND(1002,"用户不存在！！！"),
     USER_EXIST(1003,"用户已存在！！！"),

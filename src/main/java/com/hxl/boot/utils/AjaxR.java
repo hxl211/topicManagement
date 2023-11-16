@@ -17,6 +17,10 @@ public class AjaxR {
     public static AjaxR success(Object ...o){
         return new AjaxR(200,"success",o);
     }
+
+    public static AjaxR success(int code,Object o){
+        return new AjaxR(code,"success",o);
+    }
     public static AjaxR success(){
         return new AjaxR(200,"success",null);
     }

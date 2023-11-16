@@ -1,7 +1,6 @@
 package com.hxl.boot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -10,7 +9,6 @@ import com.hxl.boot.annotation.StaticEnum;
 import com.hxl.boot.exception.StateException;
 import com.hxl.boot.mapper.StudentMapper;
 import com.hxl.boot.mapper.TeachMapper;
-import com.hxl.boot.pojo.Student;
 import com.hxl.boot.pojo.Teach;
 import com.hxl.boot.pojo.Topic;
 import com.hxl.boot.service.TeachService;
@@ -25,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author 21141
